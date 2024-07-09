@@ -7,6 +7,8 @@ import time
 import contextily as ctx
 import matplotlib.pyplot as plt
 
+export_path = "C:/Users/Owner/Desktop/Noam-Gal/MM/"
+
 def fetch_and_save_vehicle_data(date, output_filename="vehicles.shp"):
     api_dict = {
         'Capital Bikeshare': 'https://gbfs.capitalbikeshare.com/gbfs/en/free_bike_status.json',
@@ -69,8 +71,8 @@ def fetch_and_save_vehicle_data(date, output_filename="vehicles.shp"):
 
     # Save the GeoDataFrames as shapefiles
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    vehicles_filename = f"vehicles_{timestamp}.shp"
-    route_filename = f"routes_{timestamp}.shp"
+    vehicles_filename = f"{export_path}vehicles_{timestamp}.shp"
+    route_filename = f"{export_path}routes_{timestamp}.shp"
     gdf.to_file(vehicles_filename)
     route_gdf.to_file(route_filename)
 
@@ -90,7 +92,8 @@ def run_for_an_hour():
         schedule_time = date_to_fetch + datetime.timedelta(minutes=i)
         schedule.every().day.at(schedule_time.strftime("%H:%M")).do(fetch_and_save_vehicle_data, date=date_to_fetch)
 
-    while True:
+    end_time = current_time + datetime.timedelta(hours=1)
+    while datetime.datetime.now() < end_time:
         schedule.run_pending()
         time.sleep(0.5)
 
